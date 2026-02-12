@@ -1,0 +1,143 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3>Create a New Listing</h3>
+
+    <form
+      method="POST"
+      action="/listings"
+      class="needs-validation"
+      novalidate
+      enctype="multipart/form-data"
+    >
+
+      <!-- TITLE -->
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input
+          name="listing[title]"
+          type="text"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Title is required</div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea
+          name="listing[description]"
+          class="form-control"
+          required
+        ></textarea>
+        <div class="invalid-feedback">Description is required</div>
+      </div>
+
+      <!-- IMAGE (✅ CORRECT) -->
+   <div class="mb-3">
+    <label for="image">Upload Listing Image</label>
+    <input
+      type="file"
+      id="image"
+      name="image" 
+      class="form-control"
+      accept="image/*"
+    />
+  </div>
+
+      <!-- PRICE + COUNTRY -->
+      <div class="row">
+        <div class="mb-3 col-md-4">
+          <label class="form-label">Price</label>
+          <input
+            name="listing[price]"
+            type="number"
+            min="0"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Price is required</div>
+        </div>
+
+        <div class="mb-3 col-md-8">
+          <label class="form-label">Country</label>
+          <input
+            name="listing[country]"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Country is required</div>
+        </div>
+      </div>
+
+      <!-- LOCATION -->
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input
+          name="listing[location]"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Location is required</div>
+      </div>
+
+      <!-- MAP -->
+      <div class="mb-3">
+        <label class="form-label">Your Current Location</label>
+        <div
+          id="map"
+          style="height: 350px; border-radius: 10px;"
+        ></div>
+      </div>
+
+      <!-- ✅ HIDDEN COORDINATES -->
+      <input type="hidden" name="listing[latitude]" id="latitude">
+      <input type="hidden" name="listing[longitude]" id="longitude">
+
+      <button class="btn btn-dark mt-3">Add Listing</button>
+    </form>
+  </div>
+</div>
+
+<!-- ✅ LEAFLET CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<!-- ✅ LEAFLET JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- 🌍 LOCATION SCRIPT -->
+<script>
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        document.getElementById("latitude").value = lat;
+        document.getElementById("longitude").value = lng;
+
+        const map = L.map("map").setView([lat, lng], 15);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors",
+        }).addTo(map);
+
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup("You are here 📍")
+          .openPopup();
+      },
+      () => {
+        alert("Please allow location access");
+      }
+    );
+  } else {
+    alert("Geolocation not supported");
+  }
+</script>
+
